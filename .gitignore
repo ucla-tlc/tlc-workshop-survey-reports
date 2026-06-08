@@ -1,0 +1,15 @@
+# Exclude everything by default to protect participant PII (survey CSVs
+# contain IP addresses, geolocation, and personal comments).
+/*
+
+# Keep only the generated reports and the generator script.
+!/.gitignore
+!/Summaries/
+/Summaries/*
+!/Summaries/generate_reports.py
+!/Summaries/Wellbeing_Series_Report.html
+!/Summaries/Preparing-to-Teach_Series_Report.html
+
+# Never track raw data or OS cruft.
+*.csv
+.DS_Store

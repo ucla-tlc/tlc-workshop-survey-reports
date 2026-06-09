@@ -337,6 +337,35 @@ def render_status_card(w, parsed):
 
 
 # ---------------------------------------------------------------------------
+# Print / PDF stylesheet (plain string: keeps figures & tables off page breaks)
+# ---------------------------------------------------------------------------
+PRINT_CSS = """
+@media print{
+  @page{margin:14mm;}
+  html,body{background:#fff;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .print-btn{display:none !important;}
+  .wrap{max-width:100%;padding:0;}
+  header.hero,.card,.panel,.overview{box-shadow:none;}
+  /* Never split a figure, table row, comment, box, or summary tile */
+  .panel,.box,.hl,.kpi,.q,.bar-row,.ov-row,.dl-row,blockquote,
+  .sent-bar,.donut-wrap,.ws-head,.status-card{
+    break-inside:avoid;page-break-inside:avoid;
+  }
+  /* Keep section headings with the content that follows */
+  h2.section,h3,.q-label{break-after:avoid;page-break-after:avoid;}
+  /* Stack the two-column executive summary for clean pagination */
+  .exec{display:block;}
+  .exec .panel{margin-bottom:14px;}
+  .grid{gap:10px;}
+  a[href]{color:inherit;text-decoration:none;}
+  .back{display:none;}
+  footer{margin-top:20px;}
+}
+"""
+
+
+# ---------------------------------------------------------------------------
 # CSS (UCLA branded)
 # ---------------------------------------------------------------------------
 def build_css():
@@ -435,7 +464,9 @@ blockquote{{margin:0;padding:10px 14px;background:#f6f9fc;border-left:3px solid 
 .note{{color:#475569;font-size:14px;margin:10px 0 0}}
 .back{{display:inline-block;margin:6px 0 0 4px;font-size:12px;color:var(--blue);text-decoration:none;font-weight:600}}
 footer{{margin-top:40px;text-align:center;color:var(--muted);font-size:12px}}
-"""
+.print-btn{{position:fixed;top:18px;right:18px;z-index:50;background:{UCLA_BLUE};color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,59,92,.35)}}
+.print-btn:hover{{background:{UCLA_DARKER_BLUE}}}
+""" + PRINT_CSS
 
 
 def build_report(series, quarter_label):
@@ -514,6 +545,7 @@ def build_report(series, quarter_label):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(series)} Series \u2014 Post-Survey Report</title>
 <style>{build_css()}</style></head><body>
+<button class="print-btn" onclick="window.print()">\u2193 Save as PDF</button>
 <div class="wrap" id="top">
 <header class="hero">
   <p class="eyebrow">UCLA TLC \u00b7 Workshop Post-Survey Report \u00b7 {esc(quarter_label)}</p>

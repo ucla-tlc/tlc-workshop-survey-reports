@@ -4,6 +4,7 @@
 
 # Keep only the generated reports and the generator script.
 !/.gitignore
+!/README.md
 !/Summaries/
 /Summaries/*
 !/Summaries/generate_reports.py

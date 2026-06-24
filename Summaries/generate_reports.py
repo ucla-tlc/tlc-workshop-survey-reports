@@ -569,7 +569,7 @@ def build_report(series, quarter_label):
     </div>
   </div>
   <div class="panel">
-    <h4>Overall participant sentiment <span class="muted" style="text-transform:none;letter-spacing:0">(all rating questions, n={sent_total})</span></h4>
+    <h4>Overall participant sentiment <span class="muted" style="text-transform:none;letter-spacing:0">({sent_total} ratings across {total_resp} participants)</span></h4>
     <div class="sent-bar">{sent_bar}</div>
     <div class="sent-key">
       <span><span class="sw" style="background:{SENT_POS}"></span>Positive {pos_pct}%</span>

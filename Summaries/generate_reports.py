@@ -35,6 +35,16 @@ GRAY = "#8A8B8C"
 # Diverging scale used for ALL Likert questions: gold (low) -> gray -> blue (high)
 DIVERGING = ["#E89C00", "#FFC72C", "#FFE08A", "#E5E5E0", UCLA_LIGHT_BLUE, UCLA_BLUE, UCLA_DARKEST_BLUE]
 
+# Five-step Likert palette for stacked bars (darker, easier to distinguish)
+LIKERT_5_COLORS = ["#B45309", "#D97706", "#64748B", "#2774AE", "#003B5C"]
+LIKERT_5_LABELS = [
+    ("1", "Strongly disagree"),
+    ("2", "Disagree"),
+    ("3", "Neutral"),
+    ("4", "Agree"),
+    ("5", "Strongly agree"),
+]
+
 # Three-way sentiment colors (consistent with the diverging ends)
 SENT_POS = UCLA_BLUE
 SENT_NEU = "#D9DCE1"
@@ -87,8 +97,8 @@ WORKSHOPS = [
          modality="In-person", date="Apr 30, 2026", rsvp=4, status="missing",
          note="Post-survey data file not found (table shows 1 response)."),
     dict(series="Preparing to Teach", title="Nurturing Engaged and Ethical Learners with Critical AI Literacy",
-         modality="In-person", date="May 4, 2026", rsvp=27, status="missing",
-         note="Post-survey data file not found (table shows 6 responses)."),
+         modality="In-person", date="May 4, 2026", rsvp=27,
+         file="Sp26 Nurturing Ethical AI/dataset.csv"),
     dict(series="Preparing to Teach", title="Dialoguing with your Instructional Team about AI",
          modality="Online", date="May 11, 2026", rsvp=7,
          file="Sp26 Dialogue with/Sp26_2026-05-11_Dialoguing-about-AI_online_post-survey.csv"),
@@ -117,7 +127,23 @@ SCALES = [
      "Moderately useful", "Very useful", "Extremely useful"],
     ["Never", "Rarely", "Sometimes", "Often", "Always"],
     ["Poor", "Fair", "Good", "Very good", "Excellent"],
+    ["Very dissatisfied", "Dissatisfied", "Somewhat dissatisfied",
+     "Neither satisfied nor dissatisfied", "Somewhat satisfied", "Satisfied", "Very satisfied"],
+    ["Definitely will not", "Probably will not", "Might or might not",
+     "Probably will", "Definitely will"],
+    ["No", "Maybe", "Yes"],
+    ["1. Strongly Disagree", "2. Disagree", "3. Neutral", "4. Agree", "5. Strongly Agree"],
+    ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"],
 ]
+
+ONE_PAGER_WORKSHOP = dict(
+    title="Nurturing Engaged and Ethical Learners with Critical AI Literacy",
+    series="Preparing to Teach",
+    modality="In-person",
+    date="May 4, 2026",
+    rsvp=27,
+    file="Sp26 Nurturing Ethical AI/dataset.csv",
+)
 
 
 def slug(w):
@@ -143,6 +169,17 @@ def color_for(rank, n):
     if n <= 1:
         return UCLA_BLUE
     return DIVERGING[round(rank / (n - 1) * (len(DIVERGING) - 1))]
+
+
+def likert_color_index(rank, n):
+    """Map any ordinal rank to a 0–4 index for the 5-step Likert palette."""
+    if n <= 1:
+        return 4
+    return round(rank / (n - 1) * 4)
+
+
+def likert_color(rank, n):
+    return LIKERT_5_COLORS[likert_color_index(rank, n)]
 
 
 def classify(rank, n):
@@ -604,14 +641,418 @@ Question bars use a gold\u2013to\u2013blue scale (gold = lower / less favorable,
 </div></body></html>"""
 
 
+def collect_suggestions(w, parsed, limit=6, max_len=220):
+    """Pull verbatim improvement comments from open-ended survey questions."""
+    keywords = ("suggest", "improve", "comment", "support", "interest", "topic")
+    seen, quotes = set(), []
+    if not parsed:
+        return quotes
+    for q in parsed["questions"]:
+        if q["type"] != "text":
+            continue
+        label = q["label"].lower()
+        if not any(k in label for k in keywords):
+            continue
+        for ans in q["answers"]:
+            text = ans.strip()
+            if len(text) < 8 or text.lower() in seen:
+                continue
+            seen.add(text.lower())
+            if max_len and len(text) > max_len:
+                text = text[: max_len - 1].rstrip() + "\u2026"
+            quotes.append(text)
+            if len(quotes) >= limit:
+                return quotes
+    return quotes
+
+
+def render_compact_bar(label, pct, color=None):
+    color = color or UCLA_BLUE
+    short = label if len(label) <= 42 else label[:39].rstrip() + "\u2026"
+    return (
+        f'<div class="c-row"><div class="c-label" title="{esc(label)}">{esc(short)}</div>'
+        f'<div class="c-track"><div class="c-fill" style="width:{pct:.1f}%;background:{color}"></div></div>'
+        f'<div class="c-val">{pct:.0f}%</div></div>'
+    )
+
+
+def render_likert_stacked_q(q, label=None):
+    """Single horizontal stacked bar per Likert question."""
+    n = q["n"]
+    title = label or q["label"]
+    scale = q.get("scale")
+    ordered = list(scale) if scale else list(q["ordered"])
+
+    segments = []
+    for cat in ordered:
+        c = q["counts"].get(cat, 0)
+        if not n or c <= 0:
+            continue
+        pct = 100 * c / n
+        rank = scale.index(cat) if scale and cat in scale else 0
+        n_scale = len(scale) if scale else max(len(ordered), 1)
+        color = likert_color(rank, n_scale)
+        chip = likert_color_index(rank, n_scale) + 1
+        inner = f"{c} ({pct:.0f}%)"
+        sm_cls = " likert-seg-sm" if pct < 16 else ""
+        tip = esc(f"{chip} · {cat}: {c} ({pct:.0f}%)")
+        segments.append(
+            f'<span class="likert-seg{sm_cls}" style="width:{pct:.2f}%;background:{color}" '
+            f'title="{tip}">{inner}</span>'
+        )
+
+    stack = "".join(segments) if segments else '<span class="likert-empty">No responses</span>'
+    fav_line = ""
+    if q.get("fav") is not None and n:
+        fav_n = q["fav"]
+        fav_pct = round(100 * fav_n / n)
+        fav_line = f'<div class="likert-fav">{fav_pct}% favorable (n={fav_n}/{n})</div>'
+
+    return (
+        f'<div class="likert-q">'
+        f'<div class="likert-q-head">'
+        f'<div class="likert-q-title">{esc(title)}</div>'
+        f'<span class="likert-q-n">n={n}</span></div>'
+        f'<div class="likert-stack">{stack}</div>'
+        f'{fav_line}</div>'
+    )
+
+
+def render_likert_legend_note(compact=False):
+    chips = []
+    for i, (num, label) in enumerate(LIKERT_5_LABELS):
+        color = LIKERT_5_COLORS[i]
+        chips.append(
+            f'<span class="likert-legend-chip">'
+            f'<i class="likert-swatch likert-swatch-lg" style="background:{color}"></i>'
+            f'<span class="likert-legend-num">{num}</span>'
+            f'<span class="likert-legend-text">{label}</span></span>'
+        )
+    wrap_cls = "likert-legend-wrap likert-legend-section" if compact else "likert-legend-wrap"
+    hint = "" if compact else (
+        '<p class="likert-legend-hint">Longer scales (e.g., 7-point satisfaction) are mapped to these five colors.</p>'
+    )
+    return (
+        f'<div class="{wrap_cls}">'
+        '<div class="likert-legend-title">Response scale (1 = low &rarr; 5 = high)</div>'
+        f'<div class="likert-legend">{"".join(chips)}</div>'
+        f'{hint}</div>'
+    )
+
+
+def fav_pct(q):
+    if q["type"] != "scale" or not q["n"] or q.get("fav") is None:
+        return None
+    return round(100 * q["fav"] / q["n"])
+
+
+def build_one_pager():
+    w = ONE_PAGER_WORKSHOP
+    parsed = parse_csv(os.path.join(BASE, w["file"]))
+    if not parsed:
+        raise SystemExit(f"Could not parse survey data: {w['file']}")
+
+    n_resp = parsed["n_resp"]
+    n_finished = parsed["n_finished"]
+    rsvp = w.get("rsvp") or 0
+    resp_rate = round(100 * n_finished / rsvp) if rsvp else 0
+
+    sent = parsed["sentiment"]
+    sent_total = sum(sent.values()) or 1
+    pos_pct = round(100 * sent["pos"] / sent_total)
+    neu_pct = round(100 * sent["neu"] / sent_total)
+    neg_pct = 100 - pos_pct - neu_pct
+    avg_fav = parsed["avg_fav"] or 0
+
+    def seg(p, color):
+        return (f'<span style="width:{p}%;background:{color}">{p}%</span>' if p >= 7
+                else f'<span style="width:{p}%;background:{color}"></span>') if p > 0 else ""
+
+    # Group questions by theme
+    experience_keys = ("logistics", "materials", "presenters", "facilitators",
+                       "learned new", "achieved its stated", "incorporate", "recommend")
+    confidence_keys = ("confident designing", "design ai assignments", "academic integrity",
+                       "practical strategies")
+    skill_questions = [q for q in parsed["questions"]
+                       if q["type"] == "scale" and "support the following skills" in q["label"]]
+
+    scale_questions = [q for q in parsed["questions"] if q["type"] == "scale"]
+    n_scale_q = len(scale_questions)
+
+    experience_blocks = ""
+    for q in parsed["questions"]:
+        if q["type"] != "scale":
+            continue
+        label_l = q["label"].lower()
+        if not any(k in label_l for k in experience_keys):
+            continue
+        experience_blocks += render_likert_stacked_q(q)
+
+    confidence_blocks = ""
+    for q in parsed["questions"]:
+        if q["type"] != "scale":
+            continue
+        if not any(k in q["label"].lower() for k in confidence_keys):
+            continue
+        confidence_blocks += render_likert_stacked_q(q)
+
+    skill_blocks = ""
+    for q in skill_questions:
+        short = q["label"].split(" - ")[-1].strip() if " - " in q["label"] else q["label"]
+        skill_blocks += render_likert_stacked_q(q, label=short)
+
+    likert_legend = render_likert_legend_note(compact=True)
+
+    suggestions = collect_suggestions(w, parsed, limit=10, max_len=None)
+    sugg_items = "".join(f'<blockquote>&ldquo;{esc(s)}&rdquo;</blockquote>' for s in suggestions)
+    synthesized = []
+    if any("longer" in s.lower() for s in suggestions):
+        synthesized.append("Offer a longer session or split content into two focused workshops (values/reflection vs. assignment design).")
+    if any("card" in s.lower() or "goals" in s.lower() for s in suggestions):
+        synthesized.append("Clarify the workshop arc and streamline activities so participants can connect critical AI literacy to concrete assignment tweaks.")
+    if any("organized" in s.lower() for s in suggestions):
+        synthesized.append("Maintain the well-organized format participants praised.")
+    synth_items = "".join(f"<li>{esc(s)}</li>" for s in synthesized)
+
+    overview = (
+        f"In Spring 2026, TLC offered <b>{esc(w['title'])}</b> as an in-person session in the "
+        f"<b>{esc(w['series'])}</b> series ({esc(w['date'])}). The workshop focused on critical AI "
+        f"literacy, ethical assignment design, and integrating reflection on affective outcomes when "
+        f"students use AI. <b>{n_finished}</b> participants completed the post-workshop survey "
+        f"({resp_rate}% of {rsvp} RSVPs)."
+    )
+
+    participant_blurb = (
+        f"Respondents were UCLA instructors and instructional team members who attended the "
+        f"in-person workshop. Of {rsvp} RSVPs, {n_finished} completed the survey and "
+        f"{n_resp - n_finished} additional partial response(s) were recorded. "
+        f"Feedback reflects faculty perspectives on AI-integrated assignment design and ethical "
+        f"learning outcomes."
+    )
+
+    sent_donut = svg_donut(
+        [("Positive", sent["pos"], SENT_POS),
+         ("Neutral", sent["neu"], SENT_NEU),
+         ("Negative", sent["neg"], SENT_NEG)],
+        size=160, stroke=26, center_num=f"{pos_pct}%", center_lbl="POSITIVE")
+
+    sent_explainer = (
+        f"The <b>{sent_total} ratings</b> figure is the total number of individual Likert-scale "
+        f"selections pooled across all scaled survey questions—not the number of respondents. "
+        f"There are <b>{n_scale_q} scaled questions</b>; each answer from a completed survey "
+        f"counts as one rating. With <b>{n_finished} completed surveys</b>, most items received "
+        f"<b>4 responses</b> (one completed record contained no scaled answers); a few items "
+        f"received <b>3</b> where participants skipped. Each selection is classified as "
+        f"<b>positive</b> (upper half of that question&rsquo;s scale), <b>neutral</b> (middle), "
+        f"or <b>negative</b> (lower half)."
+    )
+
+    css = f"""
+:root{{--blue:{UCLA_BLUE};--dblue:{UCLA_DARKEST_BLUE};--dkrblue:{UCLA_DARKER_BLUE};--gold:{UCLA_GOLD};--line:#e3e8ee;--muted:#5b6b7a;--panel:#f6f9fc;}}
+*{{box-sizing:border-box}}
+body{{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2937;background:#eef2f6;line-height:1.65;font-size:15px}}
+.page{{max-width:960px;margin:0 auto;padding:40px 32px 72px}}
+header{{background:linear-gradient(120deg,{UCLA_DARKEST_BLUE},{UCLA_DARKER_BLUE} 55%,{UCLA_BLUE});color:#fff;border-radius:16px;padding:36px 40px;border-top:6px solid {UCLA_GOLD};box-shadow:0 10px 28px rgba(0,59,92,.22)}}
+header .eyebrow{{text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:{UCLA_GOLD};font-weight:700;margin:0 0 10px}}
+header h1{{margin:0 0 10px;font-size:28px;line-height:1.2;max-width:28ch}}
+header .sub{{margin:0;font-size:15px;opacity:.92;max-width:52ch;line-height:1.5}}
+.kpis{{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:28px}}
+.kpi{{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:16px 14px;text-align:center}}
+.kpi .n{{display:block;font-size:28px;font-weight:800;line-height:1.1}}
+.kpi .l{{font-size:10px;text-transform:uppercase;letter-spacing:.05em;opacity:.88;margin-top:4px;display:block}}
+section{{background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 36px;margin-top:28px;box-shadow:0 1px 3px rgba(0,0,0,.05)}}
+section h2{{margin:0 0 18px;font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:12px}}
+.prose p{{margin:0 0 1.15em;font-size:15px;color:#374151;line-height:1.65}}
+.prose p:last-child{{margin-bottom:0}}
+.grid2{{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:8px}}
+.grid2>div{{min-width:0}}
+.result-block{{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px 28px;margin-top:24px}}
+.result-block:first-of-type{{margin-top:0}}
+.result-block h3{{margin:0 0 6px;font-size:16px;color:var(--dblue);font-weight:700}}
+.result-block .hint{{margin:0 0 18px;font-size:13px;color:var(--muted)}}
+.sent-panel{{display:grid;grid-template-columns:180px 1fr;gap:32px;align-items:center}}
+.sent-bar{{display:flex;height:36px;border-radius:9px;overflow:hidden;margin:12px 0 16px}}
+.sent-bar span{{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}}
+.sent-key{{display:flex;gap:24px;font-size:13px;color:var(--muted);flex-wrap:wrap}}
+.sent-key .sw{{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}}
+.sent-table{{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}}
+.sent-table th,.sent-table td{{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}}
+.sent-table th{{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}}
+.sent-table td:last-child,.sent-table th:last-child{{text-align:right}}
+.likert-legend-wrap{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin:0 0 24px}}
+.likert-legend-section{{margin:0 0 20px;padding:12px 16px}}
+.likert-legend-section .likert-legend-title{{font-size:12px;margin-bottom:8px}}
+.likert-legend-section .likert-legend-chip{{padding:8px 6px}}
+.likert-legend-section .likert-swatch-lg{{width:22px;height:22px}}
+.likert-legend-section .likert-legend-num{{font-size:15px}}
+.likert-legend-section .likert-legend-text{{font-size:10px}}
+.likert-legend-title{{font-size:13px;font-weight:700;color:var(--dblue);margin-bottom:12px}}
+.likert-legend-hint{{margin:10px 0 0;font-size:12px;color:var(--muted)}}
+.likert-legend{{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}}
+.likert-legend-chip{{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px;background:#fff;border:1px solid var(--line);border-radius:8px;text-align:center}}
+.likert-swatch{{display:inline-block;width:12px;height:12px;border-radius:3px;flex-shrink:0;border:1px solid rgba(0,0,0,.18)}}
+.likert-swatch-lg{{width:28px;height:28px;border-radius:6px;border:2px solid rgba(0,0,0,.12)}}
+.likert-legend-num{{font-size:18px;font-weight:800;color:var(--dblue);line-height:1}}
+.likert-legend-text{{font-size:11px;color:#475569;line-height:1.3}}
+.likert-q{{margin:22px 0;padding-bottom:22px;border-bottom:1px solid var(--line)}}
+.likert-q:last-child{{margin-bottom:0;padding-bottom:0;border-bottom:none}}
+.likert-q-head{{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:10px}}
+.likert-q-title{{font-weight:600;font-size:15px;color:var(--dblue);line-height:1.45;flex:1}}
+.likert-q-n{{font-size:13px;color:var(--muted);white-space:nowrap;font-weight:600}}
+.likert-stack{{display:flex;height:38px;border-radius:8px;overflow:hidden;background:#eef2f7;border:1px solid #cbd5e1}}
+.likert-seg{{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;min-width:0;overflow:hidden;text-shadow:0 1px 2px rgba(0,0,0,.35);white-space:nowrap;padding:0 4px}}
+.likert-seg-sm{{font-size:10px;padding:0 2px}}
+.likert-empty{{display:flex;align-items:center;justify-content:center;width:100%;font-size:12px;color:var(--muted);font-style:italic}}
+.likert-fav{{display:inline-block;margin-top:10px;background:#DAEBFE;color:#005587;font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px}}
+blockquote{{margin:0 0 16px;padding:16px 20px;background:var(--panel);border-left:4px solid {UCLA_LIGHT_BLUE};border-radius:0 10px 10px 0;font-size:14px;color:#334155;line-height:1.6}}
+blockquote:last-child{{margin-bottom:0}}
+ul{{margin:12px 0 0;padding-left:22px}}
+li{{margin:10px 0;font-size:15px;color:#374151;line-height:1.55}}
+.muted{{color:var(--muted);font-weight:400;font-size:13px}}
+.pill{{display:inline-block;font-size:12px;font-weight:700;padding:5px 14px;border-radius:999px;background:#DAEBFE;color:#005587;margin-top:10px}}
+.subhead{{display:block;font-size:15px;font-weight:700;color:var(--dblue);margin:0 0 14px}}
+.print-btn{{position:fixed;top:18px;right:18px;z-index:50;background:{UCLA_BLUE};color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,59,92,.3)}}
+footer{{margin-top:36px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6}}
+@media(max-width:760px){{
+  .page{{padding:24px 18px 48px}}
+  header{{padding:28px 24px}}
+  header h1{{font-size:22px}}
+  section{{padding:24px 22px}}
+  .grid2,.sent-panel{{grid-template-columns:1fr}}
+  .kpis{{grid-template-columns:repeat(2,1fr)}}
+  .likert-legend{{grid-template-columns:repeat(2,1fr)}}
+}}
+@media print{{
+  @page{{margin:16mm}}
+  html,body{{background:#fff;font-size:13px}}
+  *{{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  .print-btn{{display:none}}
+  .page{{max-width:100%;padding:0}}
+  section,header,.result-block{{box-shadow:none;break-inside:avoid}}
+}}
+"""
+
+    return f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{esc(w['title'])} — Post-Survey Summary</title>
+<style>{css}</style></head><body>
+<button class="print-btn" onclick="window.print()">Save as PDF</button>
+<div class="page">
+<header>
+  <p class="eyebrow">UCLA IEED · Teaching &amp; Learning Center · Spring 2026</p>
+  <h1>{esc(w['title'])}</h1>
+  <p class="sub">Post-workshop survey summary · {esc(w['modality'])}, {esc(w['date'])}</p>
+  <span class="pill">{esc(w['series'])} Series</span>
+  <div class="kpis">
+    <div class="kpi"><span class="n">{n_finished}</span><span class="l">Completed responses</span></div>
+    <div class="kpi"><span class="n">{rsvp}</span><span class="l">RSVPs</span></div>
+    <div class="kpi"><span class="n">{resp_rate}%</span><span class="l">Response rate (n={n_finished}/{rsvp})</span></div>
+    <div class="kpi"><span class="n">{pos_pct}%</span><span class="l">Positive (n={sent["pos"]}/{sent_total})</span></div>
+    <div class="kpi"><span class="n">{avg_fav}%</span><span class="l">Avg favorable ({n_scale_q} Qs)</span></div>
+  </div>
+</header>
+
+<section>
+  <h2>Overview</h2>
+  <div class="prose">
+    <p>{overview}</p>
+    <p>The session introduced frameworks for guiding students to reflect critically on AI use, with an emphasis on affective outcomes alongside technical skills. Participants explored card-based activities and resources for designing assignments that nurture ethical, engaged learners.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Who participated</h2>
+  <div class="prose">
+    <p>{participant_blurb}</p>
+    <p>Survey responses were anonymous. No personally identifying information is included in this summary.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Survey results</h2>
+  <p class="muted" style="margin:0 0 12px">Percent favorable = share of responses in the upper half of each rating scale. Each bar shows the full response distribution (stacked by scale point).</p>
+
+  <div class="result-block">
+    <h3>Overall sentiment</h3>
+    <p class="hint">{sent_total} Likert-scale ratings from {n_scale_q} questions</p>
+    <p style="margin:0 0 18px;font-size:14px;color:#374151;line-height:1.65">{sent_explainer}</p>
+    <div class="sent-panel">
+      {sent_donut}
+      <div>
+        <div class="sent-bar">{seg(pos_pct, SENT_POS)}{seg(neu_pct, SENT_NEU)}{seg(neg_pct, SENT_NEG)}</div>
+        <div class="sent-key">
+          <span><span class="sw" style="background:{SENT_POS}"></span>Positive {pos_pct}% (n={sent["pos"]})</span>
+          <span><span class="sw" style="background:{SENT_NEU}"></span>Neutral {neu_pct}% (n={sent["neu"]})</span>
+          <span><span class="sw" style="background:{SENT_NEG}"></span>Negative {neg_pct}% (n={sent["neg"]})</span>
+        </div>
+        <table class="sent-table">
+          <thead><tr><th>Classification</th><th>Count (n)</th><th>Share</th></tr></thead>
+          <tbody>
+            <tr><td>Positive</td><td>{sent["pos"]}</td><td>{pos_pct}%</td></tr>
+            <tr><td>Neutral</td><td>{sent["neu"]}</td><td>{neu_pct}%</td></tr>
+            <tr><td>Negative</td><td>{sent["neg"]}</td><td>{neg_pct}%</td></tr>
+            <tr><td><b>Total ratings</b></td><td><b>{sent_total}</b></td><td>100%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-block">
+    <h3>Workshop experience</h3>
+    <p class="hint">Logistics, delivery, learning outcomes, and likelihood to recommend</p>
+    {likert_legend}
+    {experience_blocks}
+  </div>
+
+  <div class="result-block">
+    <h3>AI assignment confidence</h3>
+    <p class="hint">Self-reported readiness to design AI-integrated assignments</p>
+    {likert_legend}
+    {confidence_blocks}
+  </div>
+
+  <div class="result-block">
+    <h3>Planned skill focus</h3>
+    <p class="hint">Skills participants plan to support through AI-integrated assignment design</p>
+    {likert_legend}
+    {skill_blocks}
+  </div>
+</section>
+
+<section>
+  <h2>Suggestions</h2>
+  <div class="grid2">
+    <div>
+      <span class="subhead">From participants</span>
+      {sugg_items}
+    </div>
+    <div>
+      <span class="subhead">Themes for next time</span>
+      <ul>{synth_items}</ul>
+    </div>
+  </div>
+</section>
+
+<footer>Generated from Qualtrics post-survey export · UCLA TLC / IEED · Spring 2026<br>
+Percent favorable = upper half of each rating scale.</footer>
+</div></body></html>"""
+
+
 def main():
-    for series, quarter, fname in [
-        ("Wellbeing", "Winter & Spring 2026", "Wellbeing_Series_Report.html"),
-        ("Preparing to Teach", "Winter & Spring 2026", "Preparing-to-Teach_Series_Report.html"),
+    quarter = "Winter & Spring 2026"
+    for series, fname in [
+        ("Wellbeing", "Wellbeing_Series_Report.html"),
+        ("Preparing to Teach", "Preparing-to-Teach_Series_Report.html"),
     ]:
         with open(os.path.join(OUT, fname), "w", encoding="utf-8") as f:
             f.write(build_report(series, quarter))
         print(f"wrote {fname}")
+    one_pager = "Workshop_One_Pager_Report.html"
+    with open(os.path.join(OUT, one_pager), "w", encoding="utf-8") as f:
+        f.write(build_one_pager())
+    print(f"wrote {one_pager}")
 
 
 if __name__ == "__main__":

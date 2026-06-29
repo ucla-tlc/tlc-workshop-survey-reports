@@ -11,6 +11,7 @@
 !/Summaries/generate_reports.py
 !/Summaries/Wellbeing_Series_Report.html
 !/Summaries/Preparing-to-Teach_Series_Report.html
+!/Summaries/Workshop_One_Pager_Report.html
 
 # Never track raw data or OS cruft.
 *.csv

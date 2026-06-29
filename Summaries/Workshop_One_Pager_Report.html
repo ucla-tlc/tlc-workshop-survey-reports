@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nurturing Engaged and Ethical Learners with Critical AI Literacy — Post-Survey Summary</title>
+<style>
+:root{--blue:#2774AE;--dblue:#003B5C;--dkrblue:#005587;--gold:#FFD100;--line:#e3e8ee;--muted:#5b6b7a;--panel:#f6f9fc;}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1f2937;background:#eef2f6;line-height:1.65;font-size:15px}
+.page{max-width:960px;margin:0 auto;padding:40px 32px 72px}
+header{background:linear-gradient(120deg,#003B5C,#005587 55%,#2774AE);color:#fff;border-radius:16px;padding:36px 40px;border-top:6px solid #FFD100;box-shadow:0 10px 28px rgba(0,59,92,.22)}
+header .eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:#FFD100;font-weight:700;margin:0 0 10px}
+header h1{margin:0 0 10px;font-size:28px;line-height:1.2;max-width:28ch}
+header .sub{margin:0;font-size:15px;opacity:.92;max-width:52ch;line-height:1.5}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:28px}
+.kpi{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:16px 14px;text-align:center}
+.kpi .n{display:block;font-size:28px;font-weight:800;line-height:1.1}
+.kpi .l{font-size:10px;text-transform:uppercase;letter-spacing:.05em;opacity:.88;margin-top:4px;display:block}
+section{background:#fff;border:1px solid var(--line);border-radius:14px;padding:32px 36px;margin-top:28px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+section h2{margin:0 0 18px;font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:12px}
+.prose p{margin:0 0 1.15em;font-size:15px;color:#374151;line-height:1.65}
+.prose p:last-child{margin-bottom:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:8px}
+.grid2>div{min-width:0}
+.result-block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px 28px;margin-top:24px}
+.result-block:first-of-type{margin-top:0}
+.result-block h3{margin:0 0 6px;font-size:16px;color:var(--dblue);font-weight:700}
+.result-block .hint{margin:0 0 18px;font-size:13px;color:var(--muted)}
+.sent-panel{display:grid;grid-template-columns:180px 1fr;gap:32px;align-items:center}
+.sent-bar{display:flex;height:36px;border-radius:9px;overflow:hidden;margin:12px 0 16px}
+.sent-bar span{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.sent-key{display:flex;gap:24px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.sent-key .sw{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+.sent-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+.sent-table th,.sent-table td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.sent-table th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.sent-table td:last-child,.sent-table th:last-child{text-align:right}
+.likert-legend-wrap{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin:0 0 24px}
+.likert-legend-section{margin:0 0 20px;padding:12px 16px}
+.likert-legend-section .likert-legend-title{font-size:12px;margin-bottom:8px}
+.likert-legend-section .likert-legend-chip{padding:8px 6px}
+.likert-legend-section .likert-swatch-lg{width:22px;height:22px}
+.likert-legend-section .likert-legend-num{font-size:15px}
+.likert-legend-section .likert-legend-text{font-size:10px}
+.likert-legend-title{font-size:13px;font-weight:700;color:var(--dblue);margin-bottom:12px}
+.likert-legend-hint{margin:10px 0 0;font-size:12px;color:var(--muted)}
+.likert-legend{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.likert-legend-chip{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px;background:#fff;border:1px solid var(--line);border-radius:8px;text-align:center}
+.likert-swatch{display:inline-block;width:12px;height:12px;border-radius:3px;flex-shrink:0;border:1px solid rgba(0,0,0,.18)}
+.likert-swatch-lg{width:28px;height:28px;border-radius:6px;border:2px solid rgba(0,0,0,.12)}
+.likert-legend-num{font-size:18px;font-weight:800;color:var(--dblue);line-height:1}
+.likert-legend-text{font-size:11px;color:#475569;line-height:1.3}
+.likert-q{margin:22px 0;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.likert-q:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.likert-q-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:10px}
+.likert-q-title{font-weight:600;font-size:15px;color:var(--dblue);line-height:1.45;flex:1}
+.likert-q-n{font-size:13px;color:var(--muted);white-space:nowrap;font-weight:600}
+.likert-stack{display:flex;height:38px;border-radius:8px;overflow:hidden;background:#eef2f7;border:1px solid #cbd5e1}
+.likert-seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;min-width:0;overflow:hidden;text-shadow:0 1px 2px rgba(0,0,0,.35);white-space:nowrap;padding:0 4px}
+.likert-seg-sm{font-size:10px;padding:0 2px}
+.likert-empty{display:flex;align-items:center;justify-content:center;width:100%;font-size:12px;color:var(--muted);font-style:italic}
+.likert-fav{display:inline-block;margin-top:10px;background:#DAEBFE;color:#005587;font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px}
+blockquote{margin:0 0 16px;padding:16px 20px;background:var(--panel);border-left:4px solid #8BB8E8;border-radius:0 10px 10px 0;font-size:14px;color:#334155;line-height:1.6}
+blockquote:last-child{margin-bottom:0}
+ul{margin:12px 0 0;padding-left:22px}
+li{margin:10px 0;font-size:15px;color:#374151;line-height:1.55}
+.muted{color:var(--muted);font-weight:400;font-size:13px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:5px 14px;border-radius:999px;background:#DAEBFE;color:#005587;margin-top:10px}
+.subhead{display:block;font-size:15px;font-weight:700;color:var(--dblue);margin:0 0 14px}
+.print-btn{position:fixed;top:18px;right:18px;z-index:50;background:#2774AE;color:#fff;border:none;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,59,92,.3)}
+footer{margin-top:36px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6}
+@media(max-width:760px){
+  .page{padding:24px 18px 48px}
+  header{padding:28px 24px}
+  header h1{font-size:22px}
+  section{padding:24px 22px}
+  .grid2,.sent-panel{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .likert-legend{grid-template-columns:repeat(2,1fr)}
+}
+@media print{
+  @page{margin:16mm}
+  html,body{background:#fff;font-size:13px}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .print-btn{display:none}
+  .page{max-width:100%;padding:0}
+  section,header,.result-block{box-shadow:none;break-inside:avoid}
+}
+</style></head><body>
+<button class="print-btn" onclick="window.print()">Save as PDF</button>
+<div class="page">
+<header>
+  <p class="eyebrow">UCLA IEED · Teaching &amp; Learning Center · Spring 2026</p>
+  <h1>Nurturing Engaged and Ethical Learners with Critical AI Literacy</h1>
+  <p class="sub">Post-workshop survey summary · In-person, May 4, 2026</p>
+  <span class="pill">Preparing to Teach Series</span>
+  <div class="kpis">
+    <div class="kpi"><span class="n">5</span><span class="l">Completed responses</span></div>
+    <div class="kpi"><span class="n">27</span><span class="l">RSVPs</span></div>
+    <div class="kpi"><span class="n">19%</span><span class="l">Response rate (n=5/27)</span></div>
+    <div class="kpi"><span class="n">82%</span><span class="l">Positive (n=63/77)</span></div>
+    <div class="kpi"><span class="n">82%</span><span class="l">Avg favorable (20 Qs)</span></div>
+  </div>
+</header>
+
+<section>
+  <h2>Overview</h2>
+  <div class="prose">
+    <p>In Spring 2026, TLC offered <b>Nurturing Engaged and Ethical Learners with Critical AI Literacy</b> as an in-person session in the <b>Preparing to Teach</b> series (May 4, 2026). The workshop focused on critical AI literacy, ethical assignment design, and integrating reflection on affective outcomes when students use AI. <b>5</b> participants completed the post-workshop survey (19% of 27 RSVPs).</p>
+    <p>The session introduced frameworks for guiding students to reflect critically on AI use, with an emphasis on affective outcomes alongside technical skills. Participants explored card-based activities and resources for designing assignments that nurture ethical, engaged learners.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Who participated</h2>
+  <div class="prose">
+    <p>Respondents were UCLA instructors and instructional team members who attended the in-person workshop. Of 27 RSVPs, 5 completed the survey and 1 additional partial response(s) were recorded. Feedback reflects faculty perspectives on AI-integrated assignment design and ethical learning outcomes.</p>
+    <p>Survey responses were anonymous. No personally identifying information is included in this summary.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Survey results</h2>
+  <p class="muted" style="margin:0 0 12px">Percent favorable = share of responses in the upper half of each rating scale. Each bar shows the full response distribution (stacked by scale point).</p>
+
+  <div class="result-block">
+    <h3>Overall sentiment</h3>
+    <p class="hint">77 Likert-scale ratings from 20 questions</p>
+    <p style="margin:0 0 18px;font-size:14px;color:#374151;line-height:1.65">The <b>77 ratings</b> figure is the total number of individual Likert-scale selections pooled across all scaled survey questions—not the number of respondents. There are <b>20 scaled questions</b>; each answer from a completed survey counts as one rating. With <b>5 completed surveys</b>, most items received <b>4 responses</b> (one completed record contained no scaled answers); a few items received <b>3</b> where participants skipped. Each selection is classified as <b>positive</b> (upper half of that question&rsquo;s scale), <b>neutral</b> (middle), or <b>negative</b> (lower half).</p>
+    <div class="sent-panel">
+      <svg viewBox="0 0 160 160" width="160" height="160" role="img"><circle cx="80.0" cy="80.0" r="67.00" fill="none" stroke="#eef1f4" stroke-width="26"/><circle cx="80.0" cy="80.0" r="67.00" fill="none" stroke="#2774AE" stroke-width="26" stroke-dasharray="344.43 76.54" stroke-dashoffset="-0.00" transform="rotate(-90 80.0 80.0)"/><circle cx="80.0" cy="80.0" r="67.00" fill="none" stroke="#D9DCE1" stroke-width="26" stroke-dasharray="60.14 360.83" stroke-dashoffset="-344.43" transform="rotate(-90 80.0 80.0)"/><circle cx="80.0" cy="80.0" r="67.00" fill="none" stroke="#FFC72C" stroke-width="26" stroke-dasharray="16.40 404.57" stroke-dashoffset="-404.57" transform="rotate(-90 80.0 80.0)"/><text x="80.0" y="78.0" text-anchor="middle" font-size="38" font-weight="800" fill="#003B5C">82%</text><text x="80.0" y="100.0" text-anchor="middle" font-size="11" letter-spacing="1.5" fill="#64748b">POSITIVE</text></svg>
+      <div>
+        <div class="sent-bar"><span style="width:82%;background:#2774AE">82%</span><span style="width:14%;background:#D9DCE1">14%</span><span style="width:4%;background:#FFC72C"></span></div>
+        <div class="sent-key">
+          <span><span class="sw" style="background:#2774AE"></span>Positive 82% (n=63)</span>
+          <span><span class="sw" style="background:#D9DCE1"></span>Neutral 14% (n=11)</span>
+          <span><span class="sw" style="background:#FFC72C"></span>Negative 4% (n=3)</span>
+        </div>
+        <table class="sent-table">
+          <thead><tr><th>Classification</th><th>Count (n)</th><th>Share</th></tr></thead>
+          <tbody>
+            <tr><td>Positive</td><td>63</td><td>82%</td></tr>
+            <tr><td>Neutral</td><td>11</td><td>14%</td></tr>
+            <tr><td>Negative</td><td>3</td><td>4%</td></tr>
+            <tr><td><b>Total ratings</b></td><td><b>77</b></td><td>100%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-block">
+    <h3>Workshop experience</h3>
+    <p class="hint">Logistics, delivery, learning outcomes, and likelihood to recommend</p>
+    <div class="likert-legend-wrap likert-legend-section"><div class="likert-legend-title">Response scale (1 = low &rarr; 5 = high)</div><div class="likert-legend"><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#B45309"></i><span class="likert-legend-num">1</span><span class="likert-legend-text">Strongly disagree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#D97706"></i><span class="likert-legend-num">2</span><span class="likert-legend-text">Disagree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#64748B"></i><span class="likert-legend-num">3</span><span class="likert-legend-text">Neutral</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#2774AE"></i><span class="likert-legend-num">4</span><span class="likert-legend-text">Agree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#003B5C"></i><span class="likert-legend-num">5</span><span class="likert-legend-text">Strongly agree</span></span></div></div>
+    <div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Communication about workshop logistics (e.g., meeting details, how to access materials)</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:100.00%;background:#003B5C" title="5 · Very satisfied: 4 (100%)">4 (100%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Workshop materials and resources (e.g., handouts, presentation slides)</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:100.00%;background:#003B5C" title="5 · Very satisfied: 4 (100%)">4 (100%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">The presenters/facilitators delivered workshop content and activities in a clear manner.</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:50.00%;background:#2774AE" title="4 · Somewhat agree: 2 (50%)">2 (50%)</span><span class="likert-seg" style="width:50.00%;background:#003B5C" title="5 · Strongly agree: 2 (50%)">2 (50%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">The presenters/facilitators were knowledgeable about their respective topic(s).</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:100.00%;background:#003B5C" title="5 · Strongly agree: 4 (100%)">4 (100%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">I learned new information and/or skills that I can apply in my professional responsibilities.</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:25.00%;background:#2774AE" title="4 · Somewhat agree: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:75.00%;background:#003B5C" title="5 · Strongly agree: 3 (75%)">3 (75%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">The workshop achieved its stated objectives.</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:25.00%;background:#2774AE" title="4 · Somewhat agree: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:75.00%;background:#003B5C" title="5 · Strongly agree: 3 (75%)">3 (75%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">To what extent will you incorporate the information and tools presented in the workshop in your professional responsibilities?</div><span class="likert-q-n">n=3</span></div><div class="likert-stack"><span class="likert-seg" style="width:33.33%;background:#2774AE" title="4 · Probably will: 1 (33%)">1 (33%)</span><span class="likert-seg" style="width:66.67%;background:#003B5C" title="5 · Definitely will: 2 (67%)">2 (67%)</span></div><div class="likert-fav">100% favorable (n=3/3)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Would you recommend this workshop to a colleague?</div><span class="likert-q-n">n=3</span></div><div class="likert-stack"><span class="likert-seg" style="width:33.33%;background:#64748B" title="3 · Maybe: 1 (33%)">1 (33%)</span><span class="likert-seg" style="width:66.67%;background:#003B5C" title="5 · Yes: 2 (67%)">2 (67%)</span></div><div class="likert-fav">67% favorable (n=2/3)</div></div>
+  </div>
+
+  <div class="result-block">
+    <h3>AI assignment confidence</h3>
+    <p class="hint">Self-reported readiness to design AI-integrated assignments</p>
+    <div class="likert-legend-wrap likert-legend-section"><div class="likert-legend-title">Response scale (1 = low &rarr; 5 = high)</div><div class="likert-legend"><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#B45309"></i><span class="likert-legend-num">1</span><span class="likert-legend-text">Strongly disagree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#D97706"></i><span class="likert-legend-num">2</span><span class="likert-legend-text">Disagree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#64748B"></i><span class="likert-legend-num">3</span><span class="likert-legend-text">Neutral</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#2774AE"></i><span class="likert-legend-num">4</span><span class="likert-legend-text">Agree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#003B5C"></i><span class="likert-legend-num">5</span><span class="likert-legend-text">Strongly agree</span></span></div></div>
+    <div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">I am confident designing AI-integrated assignments.</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:25.00%;background:#D97706" title="2 · Disagree: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:25.00%;background:#64748B" title="3 · Neutral: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:25.00%;background:#2774AE" title="4 · Agree: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:25.00%;background:#003B5C" title="5 · Strongly Agree: 1 (25%)">1 (25%)</span></div><div class="likert-fav">50% favorable (n=2/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">I can design AI assignments that support disciplinary skills.</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:50.00%;background:#64748B" title="3 · Neutral: 2 (50%)">2 (50%)</span><span class="likert-seg" style="width:25.00%;background:#2774AE" title="4 · Agree: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:25.00%;background:#003B5C" title="5 · Strongly Agree: 1 (25%)">1 (25%)</span></div><div class="likert-fav">50% favorable (n=2/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">I can address academic integrity when using AI in assignment design.</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:75.00%;background:#2774AE" title="4 · Agree: 3 (75%)">3 (75%)</span><span class="likert-seg" style="width:25.00%;background:#003B5C" title="5 · Strongly Agree: 1 (25%)">1 (25%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">I gained practical strategies for AI-integrated assignment design.</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:25.00%;background:#64748B" title="3 · Neutral: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:50.00%;background:#2774AE" title="4 · Agree: 2 (50%)">2 (50%)</span><span class="likert-seg" style="width:25.00%;background:#003B5C" title="5 · Strongly Agree: 1 (25%)">1 (25%)</span></div><div class="likert-fav">75% favorable (n=3/4)</div></div>
+  </div>
+
+  <div class="result-block">
+    <h3>Planned skill focus</h3>
+    <p class="hint">Skills participants plan to support through AI-integrated assignment design</p>
+    <div class="likert-legend-wrap likert-legend-section"><div class="likert-legend-title">Response scale (1 = low &rarr; 5 = high)</div><div class="likert-legend"><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#B45309"></i><span class="likert-legend-num">1</span><span class="likert-legend-text">Strongly disagree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#D97706"></i><span class="likert-legend-num">2</span><span class="likert-legend-text">Disagree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#64748B"></i><span class="likert-legend-num">3</span><span class="likert-legend-text">Neutral</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#2774AE"></i><span class="likert-legend-num">4</span><span class="likert-legend-text">Agree</span></span><span class="likert-legend-chip"><i class="likert-swatch likert-swatch-lg" style="background:#003B5C"></i><span class="likert-legend-num">5</span><span class="likert-legend-text">Strongly agree</span></span></div></div>
+    <div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Critical Thinking &amp; Problem Solving</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:100.00%;background:#2774AE" title="4 · 4. Agree: 4 (100%)">4 (100%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Communication</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:50.00%;background:#64748B" title="3 · 3. Neutral: 2 (50%)">2 (50%)</span><span class="likert-seg" style="width:25.00%;background:#2774AE" title="4 · 4. Agree: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:25.00%;background:#003B5C" title="5 · 5. Strongly Agree: 1 (25%)">1 (25%)</span></div><div class="likert-fav">50% favorable (n=2/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Professional &amp; Ethical Judgment</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:25.00%;background:#64748B" title="3 · 3. Neutral: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:50.00%;background:#2774AE" title="4 · 4. Agree: 2 (50%)">2 (50%)</span><span class="likert-seg" style="width:25.00%;background:#003B5C" title="5 · 5. Strongly Agree: 1 (25%)">1 (25%)</span></div><div class="likert-fav">75% favorable (n=3/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Technological Fluency</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:75.00%;background:#2774AE" title="4 · 4. Agree: 3 (75%)">3 (75%)</span><span class="likert-seg" style="width:25.00%;background:#003B5C" title="5 · 5. Strongly Agree: 1 (25%)">1 (25%)</span></div><div class="likert-fav">100% favorable (n=4/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Disciplinary Writing</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:25.00%;background:#64748B" title="3 · 3. Neutral: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:75.00%;background:#2774AE" title="4 · 4. Agree: 3 (75%)">3 (75%)</span></div><div class="likert-fav">75% favorable (n=3/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Data Analysis</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:25.00%;background:#D97706" title="2 · 2. Disagree: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:50.00%;background:#64748B" title="3 · 3. Neutral: 2 (50%)">2 (50%)</span><span class="likert-seg" style="width:25.00%;background:#2774AE" title="4 · 4. Agree: 1 (25%)">1 (25%)</span></div><div class="likert-fav">25% favorable (n=1/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Research &amp; Evidence Use</div><span class="likert-q-n">n=4</span></div><div class="likert-stack"><span class="likert-seg" style="width:25.00%;background:#D97706" title="2 · 2. Disagree: 1 (25%)">1 (25%)</span><span class="likert-seg" style="width:75.00%;background:#2774AE" title="4 · 4. Agree: 3 (75%)">3 (75%)</span></div><div class="likert-fav">75% favorable (n=3/4)</div></div><div class="likert-q"><div class="likert-q-head"><div class="likert-q-title">Professional Accountability</div><span class="likert-q-n">n=3</span></div><div class="likert-stack"><span class="likert-seg" style="width:100.00%;background:#2774AE" title="4 · 4. Agree: 3 (100%)">3 (100%)</span></div><div class="likert-fav">100% favorable (n=3/3)</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Suggestions</h2>
+  <div class="grid2">
+    <div>
+      <span class="subhead">From participants</span>
+      <blockquote>&ldquo;Longer session&rdquo;</blockquote><blockquote>&ldquo;Very well organized! Thank you&rdquo;</blockquote><blockquote>&ldquo;The workshop felt as though it had two somewhat related goals that couldn&#x27;t fully be addressed in the hour. As far as I understood it, the core insight of the workshop was that guiding students to reflect critically on AI should include a consideration of affective outcomes. This is a powerful point, but I think most participants came in expecting to tweak an assignment, and so it was hard in the workshop activities to really get a sense of the big picture. The use of multiple types of card decks may have exacerbated the confusion: I really liked learning that these resources existed, but I wonder if thinking about values versus thinking about specific assignments that engage with AI really amounts to two different workshops? But I do appreciate the TLC&#x27;s programming on these issues!&rdquo;</blockquote>
+    </div>
+    <div>
+      <span class="subhead">Themes for next time</span>
+      <ul><li>Offer a longer session or split content into two focused workshops (values/reflection vs. assignment design).</li><li>Clarify the workshop arc and streamline activities so participants can connect critical AI literacy to concrete assignment tweaks.</li><li>Maintain the well-organized format participants praised.</li></ul>
+    </div>
+  </div>
+</section>
+
+<footer>Generated from Qualtrics post-survey export · UCLA TLC / IEED · Spring 2026<br>
+Percent favorable = upper half of each rating scale.</footer>
+</div></body></html>
